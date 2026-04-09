@@ -40,3 +40,4 @@ export const initBrowser = async ({ headless = false }): Promise<Browser> => {
 };
 
 export const getBrowserWSEndpoint = () => browserWSEndpoint;
+export const getBrowserInstance = () => browserInstance;
