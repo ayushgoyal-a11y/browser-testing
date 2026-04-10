@@ -1,14 +1,20 @@
-import { getPage } from "./browser/getPage";
+import { closePages, getPage } from "./browser/getPage";
 import { initBrowser, getBrowserInstance } from "./browser/initBrowser";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 let isColdStart = true;
+let initError: Error | null = null;
 
 (async function init() {
   console.log("launching browser in init phase");
-  await initBrowser();
+  try {
+    await initBrowser();
+  } catch (err) {
+    initError = err as Error;
+    console.error("Init failed:", initError.message);
+  }
 })();
 
 export const handler = async () => {
@@ -66,9 +72,8 @@ export const handler = async () => {
     console.error("Browser error:", err);
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   } finally {
-    // Close page, disconnect browser
-    console.log("Cleaning up page and disconnecting browser");
-    if (browser && process.env.NODE_ENV !== "DEV")
-      await browser.disconnect().catch(() => {});
+    // Close page only - keep browser alive for reuse on warm starts
+    console.log("Cleaning up page");
+    if (browser) await closePages(browser);
   }
 };

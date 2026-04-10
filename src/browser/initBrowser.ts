@@ -18,6 +18,7 @@ export const initBrowser = async (): Promise<Browser> => {
       process.env.NODE_ENV === "PROD",
     );
     const config = await getSparticuzConfig();
+    console.log("Config ready, launching...");
 
     global.browserInstance = await launch(config);
     console.log("Browser launched:", global.browserInstance);
