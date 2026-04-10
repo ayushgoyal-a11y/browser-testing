@@ -3,37 +3,41 @@ import { launch, Browser } from "rebrowser-puppeteer-core";
 import { getSparticuzConfig } from "./sparticuzConfig";
 import { closePages } from "./getPage";
 
-let browserInstance: Browser | null = null;
+global.browserInstance = null;
+global.messages = [];
 
 export const initBrowser = async (): Promise<Browser> => {
-  if (browserInstance) {
+  if (global.browserInstance) {
     console.log("Browser already initialized");
-    return browserInstance;
+    return global.browserInstance;
   }
 
   try {
-    console.log("Launching browser with headless =", process.env.NODE_ENV === "PROD");
+    console.log(
+      "Launching browser with headless =",
+      process.env.NODE_ENV === "PROD",
+    );
     const config = await getSparticuzConfig();
 
-    browserInstance = await launch(config);
-    console.log("Browser launched:", browserInstance);
+    global.browserInstance = await launch(config);
+    console.log("Browser launched:", global.browserInstance);
 
     // Listen for browser disconnects
-    browserInstance.on("disconnected", async () => {
+    global.browserInstance.on("disconnected", async () => {
       try {
-        if (browserInstance) await closePages(browserInstance);
+        if (global.browserInstance) await closePages(global.browserInstance);
       } catch (err) {
         console.warn("Error closing pages on disconnect:", err);
       } finally {
-        browserInstance = null;
+        global.browserInstance = null;
       }
     });
 
-    return browserInstance;
+    return global.browserInstance;
   } catch (err) {
     console.error("Error launching browser:", err);
     throw err;
   }
 };
 
-export const getBrowserInstance = () => browserInstance;
+export const getBrowserInstance = () => global.browserInstance;

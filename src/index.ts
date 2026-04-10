@@ -4,12 +4,22 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+let isColdStart = true;
+
 (async function init() {
   console.log("launching browser in init phase");
   await initBrowser();
 })();
 
 export const handler = async () => {
+  if (isColdStart) {
+    console.log("❄️ Cold start");
+    isColdStart = false;
+  } else {
+    console.log("🔥 Warm start");
+  }
+  console.log("isBrowserConnected:", getBrowserInstance());
+  console.log("isGlobalBrowserConnected:", global.browserInstance);
   console.log("Handler invoked, connecting to browser...");
   console.log(
     process.env.NODE_ENV === "DEV"

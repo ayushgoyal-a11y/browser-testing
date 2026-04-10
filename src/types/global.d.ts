@@ -3,6 +3,7 @@ interface CustomGlobal extends Global {
   lastMessage: any;
   lastError: any;
   END: number;
+  browserInstance: any;
   uiid?: string;
 }
 
