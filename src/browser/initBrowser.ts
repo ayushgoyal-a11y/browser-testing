@@ -5,15 +5,15 @@ import { closePages } from "./getPage";
 
 let browserInstance: Browser | null = null;
 
-export const initBrowser = async ({ headless = false }): Promise<Browser> => {
+export const initBrowser = async (): Promise<Browser> => {
   if (browserInstance) {
     console.log("Browser already initialized");
     return browserInstance;
   }
 
   try {
-    console.log("Launching browser with headless =", headless);
-    const config = await getSparticuzConfig({ headless });
+    console.log("Launching browser with headless =", process.env.NODE_ENV === "PROD");
+    const config = await getSparticuzConfig();
 
     browserInstance = await launch(config);
     console.log("Browser launched:", browserInstance);

@@ -2,16 +2,15 @@ import { getArgs } from "./args.js";
 import defaultViewport from "./defaultViewport.js";
 import path from "./executablePath.js";
 
-const getSparticuzConfig = async ({ headless }: { headless?: boolean }) => {
+const getSparticuzConfig = async () => {
+  const headless = process.env.NODE_ENV === "PROD";
   console.log({ headless });
 
   return {
-    args: getArgs({
-      headless,
-    }),
+    args: getArgs({ headless }),
     defaultViewport,
     executablePath: await path(),
-    headless: process.env.NODE_ENV === "PROD" ? true : false,
+    headless,
     ignoreHTTPSErrors: true,
     handleSIGHUP: false,
     handleSIGINT: false,

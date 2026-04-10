@@ -6,7 +6,7 @@ dotenv.config();
 
 (async function init() {
   console.log("launching browser in init phase");
-  await initBrowser({});
+  await initBrowser();
 })();
 
 export const handler = async () => {
