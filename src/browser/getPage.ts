@@ -13,10 +13,16 @@ export const closePages = async (browser: Browser) => {
 };
 
 export const getPage = async (browser: Browser): Promise<Page> => {
-  await closePages(browser);
+  // await closePages(browser);
 
-  // Create a fresh page
-  const page = await browser.newPage();
+  const pages = await browser.pages();
+  let page: Page;
+  if (pages.length === 1) {
+    page = pages[0];
+  } else {
+    await closePages(browser);
+    page = await browser.newPage();
+  }
 
   // Set safe timeouts
   page.setDefaultNavigationTimeout(defaultTimeout);

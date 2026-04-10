@@ -1,3 +1,4 @@
+import { automate } from "./browser/automate";
 import { closePages, getPage } from "./browser/getPage";
 import { initBrowser, getBrowserInstance } from "./browser/initBrowser";
 import * as dotenv from "dotenv";
@@ -59,14 +60,16 @@ export const handler = async () => {
     page = await getPage(browser);
     console.log("Page opened");
 
-    await page.goto("https://example.com", {
-      waitUntil: "domcontentloaded",
-      timeout: 10000,
-    });
-    console.log("Page loaded");
-    const title = await page.title();
+    // await page.goto("https://example.com", {
+    //   waitUntil: "domcontentloaded",
+    //   timeout: 10000,
+    // });
+    // console.log("Page loaded");
+    // const title = await page.title();
 
-    return { statusCode: 200, body: JSON.stringify({ title }) };
+    await automate(page);
+
+    return { statusCode: 200, body: JSON.stringify({ title: "success" }) };
   } catch (err: any) {
     // Reset globals if browser died
     console.error("Browser error:", err);
