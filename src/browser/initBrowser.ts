@@ -4,7 +4,6 @@ import { getSparticuzConfig } from "./sparticuzConfig";
 import { closePages } from "./getPage";
 
 let browserInstance: Browser | null = null;
-let browserWSEndpoint: string | null = null;
 
 export const initBrowser = async ({ headless = false }): Promise<Browser> => {
   if (browserInstance) {
@@ -17,7 +16,6 @@ export const initBrowser = async ({ headless = false }): Promise<Browser> => {
     const config = await getSparticuzConfig({ headless });
 
     browserInstance = await launch(config);
-    browserWSEndpoint = browserInstance.wsEndpoint();
     console.log("Browser launched:", browserInstance);
 
     // Listen for browser disconnects
@@ -28,7 +26,6 @@ export const initBrowser = async ({ headless = false }): Promise<Browser> => {
         console.warn("Error closing pages on disconnect:", err);
       } finally {
         browserInstance = null;
-        browserWSEndpoint = null;
       }
     });
 
@@ -39,5 +36,4 @@ export const initBrowser = async ({ headless = false }): Promise<Browser> => {
   }
 };
 
-export const getBrowserWSEndpoint = () => browserWSEndpoint;
 export const getBrowserInstance = () => browserInstance;

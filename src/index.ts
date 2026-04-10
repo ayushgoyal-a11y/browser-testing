@@ -1,56 +1,37 @@
-import { connect } from "rebrowser-puppeteer-core";
 import { getPage } from "./browser/getPage";
 import { initBrowser, getBrowserInstance } from "./browser/initBrowser";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
-let browserWSEndpoint: string | null = null;
-
-if (!process.env.IS_LOCAL) {
-  // Launch browser at cold start and store WS endpoint
-  console.log("Cold start: launching browser");
-  initBrowser({})
-    .then((browser) => {
-      browserWSEndpoint = browser.wsEndpoint();
-      console.log(
-        "Browser launched in init phase, WS endpoint:",
-        browserWSEndpoint,
-      );
-    })
-    .catch((err) => {
-      console.error("Failed to launch browser in init:", err);
-    });
-}
+(async function init() {
+  console.log("launching browser in init phase");
+  await initBrowser({});
+})();
 
 export const handler = async () => {
-  let browser;
-
   console.log("Handler invoked, connecting to browser...");
   console.log(
-    process.env.IS_LOCAL
+    process.env.NODE_ENV === "DEV"
       ? "Running in local mode"
       : "Running in production mode",
   );
-  if (process.env.IS_LOCAL) {
-    // Use the browser instance launched in dev.ts
+
+  let browser = getBrowserInstance();
+
+  let retry = 0;
+  while (!browser && retry < 10) {
+    console.log("Browser not connected. Retrying...", { retry });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     browser = getBrowserInstance();
-    if (!browser) {
-      throw new Error("Browser not launched in dev");
-    }
-  } else {
-    // Wait for browser to be launched if not yet
-    let retry = 0;  
-    while (!browserWSEndpoint && retry < 10) {
-      console.log("Waiting for browser to launch...");
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      retry++;
-    }
-    if (!browserWSEndpoint) {
-      return { statusCode: 500, body: JSON.stringify({ error: "Browser not launched in production" }) };
-    }
-    console.log("Connecting to browser via WS endpoint:", browserWSEndpoint);
-    browser = await connect({ browserWSEndpoint });
+    retry++;
+  }
+
+  if (!browser) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Browser not connected" }),
+    };
   }
 
   console.log("Connected to browser");
@@ -77,8 +58,7 @@ export const handler = async () => {
   } finally {
     // Close page, disconnect browser
     console.log("Cleaning up page and disconnecting browser");
-    if (page) await page.close().catch(() => {});
-    if (browser && !process.env.IS_LOCAL)
+    if (browser && process.env.NODE_ENV !== "DEV")
       await browser.disconnect().catch(() => {});
   }
 };
