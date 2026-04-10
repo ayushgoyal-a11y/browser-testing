@@ -1,22 +1,29 @@
-import { automate } from "./browser/automate";
-import { getPage } from "./browser/getPage";
-import { initBrowser, getBrowserInstance } from "./browser/initBrowser";
+import { automate } from "./browser/automate.js";
+import { getPage } from "./browser/getPage.js";
+import { initBrowser, getBrowserInstance } from "./browser/initBrowser.js";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 let isColdStart = true;
 let initError: Error | null = null;
+let intervalId: NodeJS.Timeout | null = null;
 
 (async function init() {
   console.log("launching browser in init phase");
   try {
-    await initBrowser();
+    let count = 0;
+    intervalId = setInterval(() => {
+      global.messages.push(count);
+      count++;
+    }, 100);
   } catch (err) {
     initError = err as Error;
     console.error("Init failed:", initError.message);
   }
 })();
+
+await initBrowser()
 
 export const handler = async () => {
   if (isColdStart) {
@@ -25,6 +32,15 @@ export const handler = async () => {
   } else {
     console.log("🔥 Warm start");
   }
+
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+
+  const length = global.messages ? global.messages.length : 0;
+  console.log("Messages length:", length);
+
   console.log("isBrowserConnected:", getBrowserInstance());
   console.log("isGlobalBrowserConnected:", global.browserInstance);
   console.log("Handler invoked, connecting to browser...");
@@ -37,9 +53,9 @@ export const handler = async () => {
   let browser = getBrowserInstance();
 
   let retry = 0;
-  while (!browser && retry < 10) {
+  while (!browser && retry < 100) {
     console.log("Browser not connected. Retrying...", { retry });
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     browser = getBrowserInstance();
     retry++;
   }

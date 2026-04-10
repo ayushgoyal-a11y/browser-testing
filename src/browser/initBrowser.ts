@@ -1,8 +1,9 @@
 // browser.ts
 import { launch, Browser } from "rebrowser-puppeteer-core";
-import { getSparticuzConfig } from "./sparticuzConfig";
+import { getSparticuzConfig } from "./sparticuzConfig/index.js";
 
 global.browserInstance = null;
+global.pageInstance = null;
 global.messages = [];
 
 export const initBrowser = async (): Promise<Browser> => {
