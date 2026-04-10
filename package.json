@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx src/dev.ts",
     "build": "tsc -p . && cp package.json dist",
+    "deploy": "powershell -Command \"Remove-Item -Force deploy.zip -ErrorAction SilentlyContinue; npm run build; Push-Location dist; npm install --omit=dev; Pop-Location; Compress-Archive -Path dist\\* -DestinationPath deploy.zip -Force\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

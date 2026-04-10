@@ -11,7 +11,7 @@ const getSparticuzConfig = async ({ headless }: { headless?: boolean }) => {
     }),
     defaultViewport,
     executablePath: await path(),
-    headless: headless ?? false,
+    headless: process.env.NODE_ENV === "PROD" ? true : false,
     ignoreHTTPSErrors: true,
     handleSIGHUP: false,
     handleSIGINT: false,

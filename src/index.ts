@@ -40,9 +40,14 @@ export const handler = async () => {
     }
   } else {
     // Wait for browser to be launched if not yet
-    while (!browserWSEndpoint) {
+    let retry = 0;  
+    while (!browserWSEndpoint && retry < 10) {
       console.log("Waiting for browser to launch...");
       await new Promise((resolve) => setTimeout(resolve, 100));
+      retry++;
+    }
+    if (!browserWSEndpoint) {
+      return { statusCode: 500, body: JSON.stringify({ error: "Browser not launched in production" }) };
     }
     console.log("Connecting to browser via WS endpoint:", browserWSEndpoint);
     browser = await connect({ browserWSEndpoint });
