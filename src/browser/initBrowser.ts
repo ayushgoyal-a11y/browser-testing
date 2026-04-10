@@ -1,6 +1,7 @@
 // browser.ts
 import { launch, Browser } from "rebrowser-puppeteer-core";
 import { getSparticuzConfig } from "./sparticuzConfig/index.js";
+import { getPage } from "./getPage.js";
 
 global.browserInstance = null;
 global.pageInstance = null;
@@ -23,6 +24,15 @@ export const initBrowser = async (): Promise<Browser> => {
     global.browserInstance = await launch(config);
     console.log("Browser launched:", global.browserInstance);
 
+    const page = await getPage(global.browserInstance);
+    console.log("Page instance created:", global.pageInstance);
+
+    await page.goto("https://www.youtube.com/", {
+      waitUntil: "load",
+      timeout: 15000,
+    });
+
+    global.pageInstance = page;
     return global.browserInstance;
   } catch (err) {
     console.error("Error launching browser:", err);
@@ -31,3 +41,4 @@ export const initBrowser = async (): Promise<Browser> => {
 };
 
 export const getBrowserInstance = () => global.browserInstance;
+export const getPageInstance = () => global.pageInstance;

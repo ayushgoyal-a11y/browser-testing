@@ -1,6 +1,10 @@
 import { automate } from "./browser/automate.js";
 import { getPage } from "./browser/getPage.js";
-import { initBrowser, getBrowserInstance } from "./browser/initBrowser.js";
+import {
+  initBrowser,
+  getBrowserInstance,
+  getPageInstance,
+} from "./browser/initBrowser.js";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -23,7 +27,7 @@ let intervalId: NodeJS.Timeout | null = null;
   }
 })();
 
-await initBrowser()
+await initBrowser();
 
 export const handler = async () => {
   if (isColdStart) {
@@ -73,7 +77,13 @@ export const handler = async () => {
 
   try {
     // Use safe getPage that closes old pages
-    page = await getPage(browser);
+    page = await getPageInstance();
+    if (!page) {
+      console.log("No existing page instance, creating new one...");
+      page = await getPage(browser);
+    } else {
+      console.log("Reusing existing page instance");
+    }
     console.log("Page opened");
 
     // await page.goto("https://example.com", {
