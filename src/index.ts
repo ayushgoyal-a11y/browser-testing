@@ -1,5 +1,5 @@
 import { automate } from "./browser/automate";
-import { closePages, getPage } from "./browser/getPage";
+import { getPage } from "./browser/getPage";
 import { initBrowser, getBrowserInstance } from "./browser/initBrowser";
 import * as dotenv from "dotenv";
 
@@ -77,6 +77,6 @@ export const handler = async () => {
   } finally {
     // Close page only - keep browser alive for reuse on warm starts
     console.log("Cleaning up page");
-    if (browser) await closePages(browser);
+    if (page && !page.isClosed()) await page.close();
   }
 };
