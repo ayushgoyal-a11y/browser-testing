@@ -13,21 +13,18 @@ let isColdStart = true;
 let initError: Error | null = null;
 let intervalId: NodeJS.Timeout | null = null;
 
-(async function init() {
+try {
   console.log("launching browser in init phase");
-  try {
-    let count = 0;
-    intervalId = setInterval(() => {
-      global.messages.push(count);
-      count++;
-    }, 100);
-  } catch (err) {
-    initError = err as Error;
-    console.error("Init failed:", initError.message);
-  }
-})();
-
-await initBrowser();
+  let count = 0;
+  intervalId = setInterval(() => {
+    global.messages.push(count);
+    count++;
+  }, 100);
+  await initBrowser();
+} catch (err) {
+  initError = err as Error;
+  console.error("Init failed:", initError.message);
+}
 
 export const handler = async () => {
   if (isColdStart) {
@@ -37,16 +34,15 @@ export const handler = async () => {
     console.log("🔥 Warm start");
   }
 
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
-  }
-
   const length = global.messages ? global.messages.length : 0;
   console.log("Messages length:", length);
 
-  console.log("isBrowserConnected:", getBrowserInstance());
-  console.log("isGlobalBrowserConnected:", global.browserInstance);
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+    global.messages = [];
+  }
+
   console.log("Handler invoked, connecting to browser...");
   console.log(
     process.env.NODE_ENV === "DEV"

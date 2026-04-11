@@ -25,10 +25,10 @@ export const initBrowser = async (): Promise<Browser> => {
     console.log("Browser launched:", global.browserInstance);
 
     const page = await getPage(global.browserInstance);
-    console.log("Page instance created:", global.pageInstance);
+    console.log("Page instance created:", page);
 
     await page.goto("https://www.youtube.com/", {
-      waitUntil: "load",
+      waitUntil: "domcontentloaded",
       timeout: 15000,
     });
 
