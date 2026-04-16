@@ -53,11 +53,11 @@ export const handler = async () => {
 
   //   let browser = getBrowserInstance();
 
-  const res = await fetch("https://abc123.trycloudflare.com/json/version");
-  const data = await res.json();
+  const url =
+    "wss://milton-availability-generates-thriller.trycloudflare.com/devtools/browser/71c7485a-6ee7-4cf8-86db-12a163f9a093";
 
   let browser = await puppeteer.connect({
-    browserWSEndpoint: data.webSocketDebuggerUrl.replace("ws://", "wss://"),
+    browserWSEndpoint: url,
   });
 
   let retry = 0;
@@ -66,7 +66,7 @@ export const handler = async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     // browser = getBrowserInstance();
     browser = await puppeteer.connect({
-      browserWSEndpoint: data.webSocketDebuggerUrl.replace("ws://", "wss://"),
+      browserWSEndpoint: url,
     });
     retry++;
   }
@@ -111,6 +111,6 @@ export const handler = async () => {
   } finally {
     // Close page only - keep browser alive for reuse on warm starts
     console.log("Cleaning up page");
-    if (page && !page.isClosed()) await page.close();
+    // if (page && !page.isClosed()) await page.close();
   }
 };
