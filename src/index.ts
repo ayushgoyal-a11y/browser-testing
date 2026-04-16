@@ -1,17 +1,13 @@
 import puppeteer from "rebrowser-puppeteer-core";
 import { automate } from "./automate.js";
 import { getPage } from "./browser/getPage.js";
-import {
-  initBrowser,
-  getBrowserInstance,
-  getPageInstance,
-} from "./browser/initBrowser.js";
+import { getPageInstance } from "./browser/initBrowser.js";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 let isColdStart = true;
-let initError: Error | null = null;
+// let initError: Error | null = null;
 let intervalId: NodeJS.Timeout | null = null;
 
 // try {

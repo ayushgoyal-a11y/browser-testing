@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/dev.ts",
+    "start-tunnel": "cloudflared tunnel --url http://localhost:9222",
     "debug": "tsx src/debug.ts",
     "build": "tsc -p . && cp package.json dist",
     "deploy": "powershell -Command \"Remove-Item -Force deploy.zip -ErrorAction SilentlyContinue; npm run build; Push-Location dist; npm install --omit=dev; Pop-Location; Compress-Archive -Path dist\\* -DestinationPath deploy.zip -Force\"",

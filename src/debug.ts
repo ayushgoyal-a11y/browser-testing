@@ -1,5 +1,8 @@
 import puppeteer from "rebrowser-puppeteer-core";
 
+//replace with the tunnel URL
+const TUNNEL_URL = "https://bargains-hats-musical-submission.trycloudflare.com";
+
 export const debug = async () => {
   console.log("debug");
   const browser = await puppeteer.launch({
@@ -13,8 +16,11 @@ export const debug = async () => {
     ],
   });
 
-  console.log("Browser launched");
+  console.log("Browser launched:", browser.wsEndpoint());
 
-  console.log(browser.wsEndpoint());
+  const tunnelUrl = TUNNEL_URL.replace("https://", "wss://").trim();
+  const socketUrl = browser.wsEndpoint().split("9222")[1];
+
+  console.log("Socket URL:", tunnelUrl + socketUrl);
 };
 debug();
