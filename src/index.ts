@@ -1,3 +1,4 @@
+import puppeteer from "rebrowser-puppeteer-core";
 import { automate } from "./automate.js";
 import { getPage } from "./browser/getPage.js";
 import {
@@ -13,18 +14,18 @@ let isColdStart = true;
 let initError: Error | null = null;
 let intervalId: NodeJS.Timeout | null = null;
 
-try {
-  console.log("launching browser in init phase");
-  let count = 0;
-  intervalId = setInterval(() => {
-    global.messages.push(count);
-    count++;
-  }, 100);
-  await initBrowser();
-} catch (err) {
-  initError = err as Error;
-  console.error("Init failed:", initError.message);
-}
+// try {
+//   console.log("launching browser in init phase");
+//   let count = 0;
+//   intervalId = setInterval(() => {
+//     global.messages.push(count);
+//     count++;
+//   }, 100);
+//   await initBrowser();
+// } catch (err) {
+//   initError = err as Error;
+//   console.error("Init failed:", initError.message);
+// }
 
 export const handler = async () => {
   if (isColdStart) {
@@ -50,13 +51,23 @@ export const handler = async () => {
       : "Running in production mode",
   );
 
-  let browser = getBrowserInstance();
+  //   let browser = getBrowserInstance();
+
+  const res = await fetch("https://abc123.trycloudflare.com/json/version");
+  const data = await res.json();
+
+  let browser = await puppeteer.connect({
+    browserWSEndpoint: data.webSocketDebuggerUrl.replace("ws://", "wss://"),
+  });
 
   let retry = 0;
   while (!browser && retry < 100) {
     console.log("Browser not connected. Retrying...", { retry });
     await new Promise((resolve) => setTimeout(resolve, 100));
-    browser = getBrowserInstance();
+    // browser = getBrowserInstance();
+    browser = await puppeteer.connect({
+      browserWSEndpoint: data.webSocketDebuggerUrl.replace("ws://", "wss://"),
+    });
     retry++;
   }
 
@@ -68,6 +79,7 @@ export const handler = async () => {
   }
 
   console.log("Connected to browser");
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   let page;
 
