@@ -1,4 +1,4 @@
-import { automate } from "./browser/automate.js";
+import { automate } from "./automate.js";
 import { getPage } from "./browser/getPage.js";
 import {
   initBrowser,
