@@ -1,5 +1,7 @@
 import puppeteer from "rebrowser-puppeteer-core";
+import * as dotenv from "dotenv";
 
+dotenv.config();
 //replace with the tunnel URL
 const TUNNEL_URL = "https://bargains-hats-musical-submission.trycloudflare.com";
 const PROXY_HOST = process.env.PROXY_HOST || "localhost";
@@ -8,8 +10,7 @@ const PROXY_PORT = process.env.PROXY_PORT || "3000";
 export const debug = async () => {
   console.log("debug");
   const browser = await puppeteer.launch({
-    executablePath:
-      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    executablePath: process.env.CHROMIUM_PATH,
     headless: false,
     args: [
       "--remote-debugging-port=9222", //
