@@ -6,6 +6,9 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+const PROXY_USERNAME = process.env.PROXY_USERNAME || "admin";
+const PROXY_PASSWORD = process.env.PROXY_PASSWORD || "secret";
+
 let isColdStart = true;
 // let initError: Error | null = null;
 let intervalId: NodeJS.Timeout | null = null;
@@ -89,6 +92,11 @@ export const handler = async () => {
       console.log("Reusing existing page instance");
     }
     console.log("Page opened");
+
+    await page.authenticate({
+      username: PROXY_USERNAME,
+      password: PROXY_PASSWORD,
+    });
 
     // await page.goto("https://example.com", {
     //   waitUntil: "domcontentloaded",

@@ -1,6 +1,14 @@
 import chromium from "@sparticuz/chromium-min";
 
 const NODE_ENV = process.env.NODE_ENV || "DEV";
+const PROXY_HOST = process.env.PROXY_HOST || "localhost";
+const PROXY_PORT = process.env.PROXY_PORT || "8080";
+
+const getProxyArgs = () => {
+  return NODE_ENV === "PROD"
+    ? `--proxy-server=http://${PROXY_HOST}:${PROXY_PORT}`
+    : "";
+};
 
 const disablesArgs = ({ headless }: { headless?: boolean }) => [
   "--window-size=1920,1080",
@@ -35,6 +43,8 @@ const getArgs = ({
     "--enable-automation=false",
     `--user-agent=${userAgent}`,
   ];
+
+  baseArgs.push(getProxyArgs());
 
   return baseArgs;
 };

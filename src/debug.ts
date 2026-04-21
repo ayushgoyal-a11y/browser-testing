@@ -2,6 +2,8 @@ import puppeteer from "rebrowser-puppeteer-core";
 
 //replace with the tunnel URL
 const TUNNEL_URL = "https://bargains-hats-musical-submission.trycloudflare.com";
+const PROXY_HOST = process.env.PROXY_HOST || "localhost";
+const PROXY_PORT = process.env.PROXY_PORT || "3000";
 
 export const debug = async () => {
   console.log("debug");
@@ -13,6 +15,7 @@ export const debug = async () => {
       "--remote-debugging-port=9222", //
       "--remote-debugging-address=0.0.0.0", //
       "--no-sandbox",
+      `--proxy-server=http://${PROXY_HOST}:${PROXY_PORT}`,
     ],
   });
 
