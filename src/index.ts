@@ -53,7 +53,7 @@ export const handler = async () => {
   //   let browser = getBrowserInstance();
 
   const url =
-    "wss://milton-availability-generates-thriller.trycloudflare.com/devtools/browser/71c7485a-6ee7-4cf8-86db-12a163f9a093";
+    "wss://language-helen-desire-prerequisite.trycloudflare.com/devtools/browser/c8739ed0-5c58-4ba9-a9d5-0d2267c5ab4f";
 
   let browser = await puppeteer.connect({
     browserWSEndpoint: url,
@@ -93,20 +93,27 @@ export const handler = async () => {
     }
     console.log("Page opened");
 
-    await page.authenticate({
+    const x = await page.authenticate({
       username: PROXY_USERNAME,
       password: PROXY_PASSWORD,
     });
 
-    // await page.goto("https://example.com", {
-    //   waitUntil: "domcontentloaded",
-    //   timeout: 10000,
-    // });
-    // console.log("Page loaded");
-    // const title = await page.title();
+    console.log("Authenticated", x);
 
+    await page.goto("https://example.com", {
+      waitUntil: "domcontentloaded",
+      timeout: 10000,
+    });
+    console.log("Page loaded");
+    const title = await page.title();
+    console.log(title);
+
+    await page.goto("https://api.ipify.org?format=json");
+    const ip = await page.evaluate(() => document.body.innerText);
+    console.log(ip);
     await automate(page);
 
+    browser.disconnect();
     return { statusCode: 200, body: JSON.stringify({ title: "success" }) };
   } catch (err: any) {
     // Reset globals if browser died

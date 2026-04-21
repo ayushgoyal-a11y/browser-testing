@@ -1,12 +1,12 @@
 import { Page } from "rebrowser-puppeteer-core";
 function logMemory(label: string) {
-    const mem = process.memoryUsage();
+  const mem = process.memoryUsage();
 
-    console.log(`\n [${label}] Memory Usage`);
-    console.log(`RSS: ${(mem.rss / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Heap Used: ${(mem.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`Heap Total: ${(mem.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`External: ${(mem.external / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`\n [${label}] Memory Usage`);
+  console.log(`RSS: ${(mem.rss / 1024 / 1024).toFixed(2)} MB`);
+  // console.log(`Heap Used: ${(mem.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  // console.log(`Heap Total: ${(mem.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+  // console.log(`External: ${(mem.external / 1024 / 1024).toFixed(2)} MB`);
 }
 
 export const automate = async (page: Page) => {
